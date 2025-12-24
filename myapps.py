@@ -1,5 +1,3 @@
-# Расчет доходной части заработной платы (упрощённый + диаграмма Matplotlib)
-
 import sys
 from PyQt5.QtWidgets import (
     QApplication, QWidget, QLabel, QLineEdit, QVBoxLayout,
