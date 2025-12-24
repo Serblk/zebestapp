@@ -1,10 +1,16 @@
+# Расчет доходной части заработной платы (упрощённый + диаграмма Matplotlib)
+
 import sys
 from PyQt5.QtWidgets import (
     QApplication, QWidget, QLabel, QLineEdit, QVBoxLayout,
     QPushButton, QComboBox, QMessageBox, QTextEdit
 )
 
+import matplotlib.pyplot as plt
+
 MROT = 15279
+PAST_MONTH_SALARY = 32000
+
 
 class SalaryApp(QWidget):
     def __init__(self):
@@ -58,7 +64,6 @@ class SalaryApp(QWidget):
         layout.addWidget(self.dyn_out)
 
     def coef(self):
-        # коэффициент по разряду
         r = int(self.grade.currentText())
         if r == 1:
             return 1.00
@@ -111,10 +116,10 @@ class SalaryApp(QWidget):
             wd, wkd = self.get_numbers()
             sick = wd - wkd
 
-            # чтобы одновременно показать и оклад, и зарплату (по условию не запрещено)
             k = self.coef()
             oklad = MROT * k
             salary = oklad * wkd / wd
+
             self.oklad_out.setText(str(round(oklad, 2)))
             self.salary_out.setText(str(round(salary, 2)))
 
@@ -122,6 +127,22 @@ class SalaryApp(QWidget):
                 "Отработанные дни: " + str(wkd) + "\n" +
                 "Дни болезни (не отработано): " + str(sick)
             )
+
+            # Диаграмма: зарплата за прошлый и текущий месяц
+            plt.figure("Динамика заработной платы")
+            months = ["Прошлый месяц", "Текущий месяц"]
+            values = [PAST_MONTH_SALARY, salary]
+
+            plt.bar(months, values)
+            plt.ylabel("Зарплата (руб.)")
+            plt.title("Сравнение зарплаты: прошлый vs текущий месяц")
+
+            # подписи над столбцами
+            for i, v in enumerate(values):
+                plt.text(i, v, f"{v:.2f}", ha="center", va="bottom")
+
+            plt.show()
+
         except Exception as e:
             QMessageBox.warning(self, "Ошибка", str(e))
 
